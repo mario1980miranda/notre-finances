@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    <!-- Log level for our application -->
+    <logger name="com.code.truck.finances" level="INFO"/>
+
+    <!-- Monitor thread issues -->
+    <logger name="org.apache.catalina.loader.WebappClassLoaderBase" level="WARN"/>
+
+    <!-- Monitor database operations -->
+    <logger name="org.springframework.jdbc.core" level="INFO"/>
+    <logger name="org.h2" level="INFO"/>
+
+    <!-- Reduce noise from Vaadin dev server -->
+    <logger name="com.vaadin.flow.server.frontend" level="ERROR"/>
+    <logger name="dev-server" level="ERROR"/>
+
+    <!-- JNA logging -->
+    <logger name="com.sun.jna" level="ERROR"/>
+</configuration>
