@@ -22,23 +22,30 @@ public class GoogleOAuth2JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        String authorizationHeader = request.getHeader("Authorization");
+        String path = request.getRequestURI();
 
-        logger.debug("Authorization header: {}", authorizationHeader != null ? "present" : "missing");
+        // Only apply this filter to /api/** paths
+        if (!path.startsWith("/api/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String authorizationHeader = request.getHeader("Authorization");
+        logger.debug("Processing API request: {}", path);
 
         // Check if the Authorization header is present and formatted correctly
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            logger.debug("No Bearer token found for API request");
             filterChain.doFilter(request, response);
             return;
         }
 
         // Extract the token
         String token = authorizationHeader.substring(7);
-        logger.debug("Token extracted: {}", token.substring(0, Math.min(10, token.length())) + "...");
+        logger.debug("Token extracted for API request");
 
         try {
-            // For Google tokens, we'd normally extract the email from the payload
-            // This is a simplified approach for development
+            // Extract the email from the token
             String email = extractEmailFromToken(token);
             logger.debug("Extracted email: {}", email);
 
@@ -52,10 +59,10 @@ public class GoogleOAuth2JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 // Set the authentication in the SecurityContext
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                logger.debug("Authentication set in SecurityContext for user: {}", email);
+                logger.debug("Authentication set in SecurityContext for API request");
             }
         } catch (Exception e) {
-            logger.error("Could not authenticate user: " + e.getMessage(), e);
+            logger.error("Could not authenticate API request: " + e.getMessage(), e);
         }
 
         filterChain.doFilter(request, response);
