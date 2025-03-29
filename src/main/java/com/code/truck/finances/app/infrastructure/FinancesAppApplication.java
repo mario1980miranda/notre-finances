@@ -2,9 +2,7 @@ package com.code.truck.finances.app.infrastructure;
 
 import com.code.truck.finances.app.core.domain.repository.TransactionRepository;
 import com.code.truck.finances.app.core.domain.repository.UserRepository;
-import com.code.truck.finances.app.core.domain.usecase.CreateTransactionUseCase;
-import com.code.truck.finances.app.core.domain.usecase.GetTransactionsByUserUseCase;
-import com.code.truck.finances.app.core.domain.usecase.GetUserByIdUseCase;
+import com.code.truck.finances.app.core.domain.usecase.*;
 import jakarta.annotation.PreDestroy;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -33,6 +31,16 @@ public class FinancesAppApplication extends SpringBootServletInitializer {
 	@Bean
 	public GetUserByIdUseCase getUserByIdUseCase(UserRepository userRepository) {
 		return new GetUserByIdUseCase(userRepository);
+	}
+
+	@Bean
+	public CalculateMonthlySummaryUseCase calculateMonthlySummaryUseCase() {
+		return new CalculateMonthlySummaryUseCase();
+	}
+
+	@Bean
+	public GetTransactionSummaryBalanceUseCase getTransactionSummaryBalanceUseCase() {
+		return new GetTransactionSummaryBalanceUseCase();
 	}
 
 	/**

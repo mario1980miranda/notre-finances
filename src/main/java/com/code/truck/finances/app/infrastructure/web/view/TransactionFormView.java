@@ -2,7 +2,6 @@ package com.code.truck.finances.app.infrastructure.web.view;
 
 import com.code.truck.finances.app.core.domain.model.Transaction;
 import com.code.truck.finances.app.core.domain.model.TransactionType;
-import com.code.truck.finances.app.core.domain.model.User;
 import com.code.truck.finances.app.infrastructure.application.TransactionService;
 import com.code.truck.finances.app.infrastructure.application.dto.UserDTO;
 import com.vaadin.flow.component.button.Button;

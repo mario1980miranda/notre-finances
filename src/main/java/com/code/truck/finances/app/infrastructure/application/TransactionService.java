@@ -2,7 +2,6 @@ package com.code.truck.finances.app.infrastructure.application;
 
 import com.code.truck.finances.app.core.domain.model.Transaction;
 import com.code.truck.finances.app.core.domain.model.TransactionType;
-import com.code.truck.finances.app.core.domain.model.User;
 import com.code.truck.finances.app.core.domain.usecase.CreateTransactionUseCase;
 import com.code.truck.finances.app.core.domain.usecase.GetTransactionsByUserUseCase;
 import com.code.truck.finances.app.infrastructure.application.dto.TransactionDTO;
@@ -38,6 +37,8 @@ public class TransactionService {
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
+
+
 
     private TransactionDTO convertToDTO(Transaction transaction) {
         return new TransactionDTO(

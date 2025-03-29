@@ -1,11 +1,11 @@
 package com.code.truck.finances.app.infrastructure.web;
 
+import com.code.truck.finances.app.infrastructure.web.view.TransactionSummaryView;
 import com.code.truck.finances.app.infrastructure.web.view.TransactionView;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.DetachEvent;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -13,9 +13,9 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
-import com.vaadin.flow.server.VaadinSession;
 
 @Route("")
+@CssImport("./styles/styles.css")
 public class FinancesUI extends AppLayout {
 
     public FinancesUI() {
@@ -45,6 +45,7 @@ public class FinancesUI extends AppLayout {
     private Tabs getTabs() {
         Tabs tabs = new Tabs();
         tabs.add(createTab("Transactions", TransactionView.class));
+        tabs.add(createTab("Summary", TransactionSummaryView.class));
         tabs.setOrientation(Tabs.Orientation.VERTICAL);
         return tabs;
     }
