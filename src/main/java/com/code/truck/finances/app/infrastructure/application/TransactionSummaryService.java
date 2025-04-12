@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,11 +52,12 @@ public class TransactionSummaryService {
                 dto.getDescription(),
                 dto.getAmount(),
                 dto.getDate(),
-                TransactionType.valueOf(dto.getType()),
+                dto.getType(),
                 new User(
-                        UUID.fromString("00000000-0000-0000-0000-000000000001"),
-                        "demo@example.com",
-                        "demouser")
+                        dto.getUser().getId(),
+                        dto.getUser().getEmail(),
+                        dto.getUser().getUsername()
+                )
         );
     }
 }

@@ -1,4 +1,4 @@
-package com.code.truck.finances.app.core.domain.usecase;
+package com.code.truck.finances.app.core.domain.usecase.user;
 
 import com.code.truck.finances.app.core.domain.model.User;
 import com.code.truck.finances.app.core.domain.repository.UserRepository;

@@ -1,24 +1,37 @@
 package com.code.truck.finances.app.infrastructure.web;
 
+import com.code.truck.finances.app.infrastructure.application.UserService;
+import com.code.truck.finances.app.infrastructure.application.dto.UserDTO;
 import com.code.truck.finances.app.infrastructure.web.view.TransactionSummaryView;
 import com.code.truck.finances.app.infrastructure.web.view.TransactionView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
+import jakarta.annotation.security.PermitAll;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Route("")
 @CssImport("./styles/styles.css")
+@PermitAll
 public class FinancesUI extends AppLayout {
 
-    public FinancesUI() {
+    private final UserService userService;
+
+    @Autowired
+    public FinancesUI(UserService userService) {
+
+        this.userService = userService;
+
         createHeader();
         createDrawer();
     }
@@ -27,7 +40,18 @@ public class FinancesUI extends AppLayout {
         H1 logo = new H1("Finance Tracker");
         logo.addClassNames("text-l", "m-m");
 
-        HorizontalLayout header = new HorizontalLayout(new DrawerToggle(), logo);
+        // Get current user
+        UserDTO currentUser = userService.getCurrentUser();
+        Span userGreeting = new Span("Welcome, " + currentUser.getUsername());
+
+        Button logoutButton = new Button("Logout", e -> {
+            getUI().ifPresent(ui -> ui.getPage().setLocation("/logout"));
+        });
+
+        HorizontalLayout userInfo = new HorizontalLayout(userGreeting, logoutButton);
+        userInfo.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
+
+        HorizontalLayout header = new HorizontalLayout(new DrawerToggle(), logo, userInfo);
         header.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
         header.expand(logo);
         header.setWidthFull();
@@ -38,7 +62,6 @@ public class FinancesUI extends AppLayout {
 
     private void createDrawer() {
         Tabs tabs = getTabs();
-
         addToDrawer(tabs);
     }
 
@@ -55,20 +78,4 @@ public class FinancesUI extends AppLayout {
         tab.add(new RouterLink(text, navigationTarget));
         return tab;
     }
-
-//    @Override
-//    protected void onDetach(DetachEvent detachEvent) {
-//        // Properly cleanup Vaadin resources when UI is detached
-//        UI ui = getUI().orElse(null);
-//        if (ui != null) {
-//            ui.getPage().executeJs("window.onbeforeunload = null;");
-//        }
-//
-//        VaadinSession session = getSession();
-//        if (session != null && session.getSession() != null) {
-//            session.close();
-//        }
-//
-//        super.onDetach(detachEvent);
-//    }
 }

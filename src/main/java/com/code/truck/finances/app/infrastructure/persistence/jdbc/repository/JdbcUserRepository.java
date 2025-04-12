@@ -6,7 +6,10 @@ import com.code.truck.finances.app.infrastructure.persistence.jdbc.mapper.UserRo
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -29,9 +32,40 @@ public class JdbcUserRepository implements UserRepository {
 
     private static final String FIND_BY_ID_SQL = "SELECT id, email, username FROM users WHERE id = ?";
 
+    private static final String FIND_BY_EMAIL = "SELECT id, email, username FROM users WHERE email = ?";
+
+    private static final String INSERT_SQL =
+            """
+                INSERT INTO users (id, email, username)
+                VALUES (:id, :email, :username)
+            """;
+
+    private static final String UPDATE_SQL =
+            """
+                UPDATE users
+                SET email = :email, username = :username
+                WHERE id = :id
+            """;
+
     @Override
     public User save(User user) {
-        return null;
+
+        if (user.getId() == null) {
+            user.setId(UUID.randomUUID());
+        }
+
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("id", user.getId().toString())
+                .addValue("email", user.getEmail())
+                .addValue("username", user.getUsername());
+
+        // Determine if this is an insert or update
+        String sql = findById(user.getId()).isPresent() ? UPDATE_SQL : INSERT_SQL;
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        namedParameterJdbcTemplate.update(sql, params, keyHolder);
+
+        return user;
     }
 
     @Override
@@ -51,7 +85,17 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public Optional<User> findByEmail(String email) {
-        return Optional.empty();
+        try {
+            final User user = jdbcTemplate.queryForObject(
+                    FIND_BY_EMAIL,
+                    rowMapper,
+                    email
+            );
+            return Optional.ofNullable(user);
+        } catch (Exception e) {
+            logger.error("Error finding user by email: {}", email, e);
+            return Optional.empty();
+        }
     }
 
     @Override

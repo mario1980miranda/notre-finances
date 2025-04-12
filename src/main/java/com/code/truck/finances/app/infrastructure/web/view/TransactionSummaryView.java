@@ -7,11 +7,13 @@ import com.code.truck.finances.app.infrastructure.application.dto.TransactionDTO
 import com.code.truck.finances.app.infrastructure.application.dto.TransactionSummaryDTO;
 import com.code.truck.finances.app.infrastructure.application.dto.UserDTO;
 import com.code.truck.finances.app.infrastructure.web.FinancesUI;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.NumberRenderer;
 import com.vaadin.flow.router.PageTitle;
@@ -38,8 +40,6 @@ public class TransactionSummaryView extends VerticalLayout {
     private final Grid<MonthlyData> incomeGrid = new Grid<>();
     private final Grid<MonthlyData> expenseGrid = new Grid<>();
 
-    private final UserDTO currentUser;
-
     @Autowired
     public TransactionSummaryView(
             TransactionService transactionService,
@@ -49,8 +49,6 @@ public class TransactionSummaryView extends VerticalLayout {
         this.transactionService = transactionService;
         this.transactionSummaryService = transactionSummaryService;
         this.userService = userService;
-
-        this.currentUser = userService.getUserById(UUID.fromString("00000000-0000-0000-0000-000000000001"));
 
         setSizeFull();
         configureLayout();
@@ -66,7 +64,15 @@ public class TransactionSummaryView extends VerticalLayout {
         H3 expenseHeader = new H3("Monthly Expenses");
         configureGrid(expenseGrid, "Expense");
 
+        Button refreshButton = new Button("Refresh Data");
+        refreshButton.addClickListener(e -> loadData());
+
+        HorizontalLayout toolbar = new HorizontalLayout(refreshButton);
+        toolbar.setWidthFull();
+
+        // Add components to the layout
         add(
+                toolbar,
                 balanceHeader,
                 balanceValue,
                 incomeHeader,
@@ -92,6 +98,10 @@ public class TransactionSummaryView extends VerticalLayout {
     }
 
     private void loadData() {
+
+        // Get current user
+        UserDTO currentUser = userService.getCurrentUser();
+
         List<TransactionDTO> transactions = transactionService.getTransactionsByUser(currentUser);
 
         TransactionSummaryDTO summary = transactionSummaryService.generateSummary(transactions);
@@ -101,10 +111,14 @@ public class TransactionSummaryView extends VerticalLayout {
 
         if (summary.getBalance().compareTo(BigDecimal.ZERO) < 0) {
             balanceValue.setText(formattedBalance);
-            balanceValue.getStyle().set("color", "var(--lumo-error-color)");
+//            balanceValue.getClassName().clear();
+            balanceValue.addClassName("balance-value");
+            balanceValue.addClassName("negative");
         } else {
             balanceValue.setText(formattedBalance);
-            balanceValue.getStyle().set("color", "var(--lumo-success-color)");
+//            balanceValue.getClassName().clear();
+            balanceValue.addClassName("balance-value");
+            balanceValue.addClassName("positive");
         }
 
         List<MonthlyData> incomeData = convertMapToList(summary.getMonthlyIncomes());

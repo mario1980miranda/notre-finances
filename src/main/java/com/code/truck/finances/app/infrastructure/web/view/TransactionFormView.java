@@ -3,6 +3,7 @@ package com.code.truck.finances.app.infrastructure.web.view;
 import com.code.truck.finances.app.core.domain.model.Transaction;
 import com.code.truck.finances.app.core.domain.model.TransactionType;
 import com.code.truck.finances.app.infrastructure.application.TransactionService;
+import com.code.truck.finances.app.infrastructure.application.dto.TransactionDTO;
 import com.code.truck.finances.app.infrastructure.application.dto.UserDTO;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -76,7 +77,15 @@ public class TransactionFormView extends FormLayout {
                 return;
             }
 
-            transactionService.createTransaction(descriptionValue, amountValue, dateValue, typeValue, currentUser);
+            // Create a new TransactionDTO
+            TransactionDTO transaction = new TransactionDTO();
+            transaction.setDescription(descriptionValue);
+            transaction.setAmount(amountValue);
+            transaction.setDate(dateValue);
+            transaction.setType(typeValue);
+            transaction.setUser(currentUser);
+
+            transactionService.createTransaction(transaction);
             Notification.show("Transaction saved");
 
             if (afterSaveCallback != null) {

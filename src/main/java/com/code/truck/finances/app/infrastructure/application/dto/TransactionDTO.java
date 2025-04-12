@@ -1,5 +1,6 @@
 package com.code.truck.finances.app.infrastructure.application.dto;
 
+import com.code.truck.finances.app.core.domain.model.TransactionType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,6 @@ public class TransactionDTO {
     private String description;
     private BigDecimal amount;
     private LocalDate date;
-    private String type;
-    private UUID userId;
+    private TransactionType type;
+    private UserDTO user;
 }

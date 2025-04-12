@@ -1,7 +1,5 @@
 package com.code.truck.finances.app.infrastructure.web.view;
 
-import com.code.truck.finances.app.core.domain.model.Transaction;
-import com.code.truck.finances.app.core.domain.model.User;
 import com.code.truck.finances.app.infrastructure.application.TransactionService;
 import com.code.truck.finances.app.infrastructure.application.UserService;
 import com.code.truck.finances.app.infrastructure.application.dto.TransactionDTO;
@@ -12,11 +10,11 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
+import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.UUID;
-
 @Route(value = "transactions", layout = FinancesUI.class)
+@PermitAll
 public class TransactionView extends VerticalLayout {
     private final TransactionService transactionService;
     private final UserService userService;
@@ -32,8 +30,8 @@ public class TransactionView extends VerticalLayout {
         this.transactionService = transactionService;
         this.userService = userService;
 
-        // For demo purposes - in a real app, get user from security context
-        this.currentUser = userService.getUserById(UUID.fromString("00000000-0000-0000-0000-000000000001"));
+        // Get the authenticated user
+        this.currentUser = userService.getCurrentUser();
 
         setSizeFull();
 

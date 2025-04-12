@@ -3,6 +3,9 @@ package com.code.truck.finances.app.infrastructure;
 import com.code.truck.finances.app.core.domain.repository.TransactionRepository;
 import com.code.truck.finances.app.core.domain.repository.UserRepository;
 import com.code.truck.finances.app.core.domain.usecase.*;
+import com.code.truck.finances.app.core.domain.usecase.user.CreateUserUseCase;
+import com.code.truck.finances.app.core.domain.usecase.user.GetUserByEmailUseCase;
+import com.code.truck.finances.app.core.domain.usecase.user.GetUserByIdUseCase;
 import jakarta.annotation.PreDestroy;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -29,11 +32,6 @@ public class FinancesAppApplication extends SpringBootServletInitializer {
 	}
 
 	@Bean
-	public GetUserByIdUseCase getUserByIdUseCase(UserRepository userRepository) {
-		return new GetUserByIdUseCase(userRepository);
-	}
-
-	@Bean
 	public CalculateMonthlySummaryUseCase calculateMonthlySummaryUseCase() {
 		return new CalculateMonthlySummaryUseCase();
 	}
@@ -41,6 +39,21 @@ public class FinancesAppApplication extends SpringBootServletInitializer {
 	@Bean
 	public GetTransactionSummaryBalanceUseCase getTransactionSummaryBalanceUseCase() {
 		return new GetTransactionSummaryBalanceUseCase();
+	}
+
+	@Bean
+	public GetUserByIdUseCase getUserByIdUseCase(UserRepository userRepository) {
+		return new GetUserByIdUseCase(userRepository);
+	}
+
+	@Bean
+	public GetUserByEmailUseCase getUserByEmailUseCase(UserRepository userRepository) {
+		return new GetUserByEmailUseCase(userRepository);
+	}
+
+	@Bean
+	public CreateUserUseCase createUserUseCase(UserRepository userRepository) {
+		return new CreateUserUseCase(userRepository);
 	}
 
 	/**

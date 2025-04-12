@@ -1,15 +1,13 @@
 package com.code.truck.finances.app.infrastructure.application;
 
 import com.code.truck.finances.app.core.domain.model.Transaction;
-import com.code.truck.finances.app.core.domain.model.TransactionType;
+import com.code.truck.finances.app.core.domain.model.User;
 import com.code.truck.finances.app.core.domain.usecase.CreateTransactionUseCase;
 import com.code.truck.finances.app.core.domain.usecase.GetTransactionsByUserUseCase;
 import com.code.truck.finances.app.infrastructure.application.dto.TransactionDTO;
 import com.code.truck.finances.app.infrastructure.application.dto.UserDTO;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,23 +15,34 @@ import java.util.stream.Collectors;
 public class TransactionService {
     private final CreateTransactionUseCase createTransactionUseCase;
     private final GetTransactionsByUserUseCase getTransactionsByUserUseCase;
-    private final UserService userService;
 
     public TransactionService(CreateTransactionUseCase createTransactionUseCase,
-                              GetTransactionsByUserUseCase getTransactionsByUserUseCase, UserService userService) {
+                              GetTransactionsByUserUseCase getTransactionsByUserUseCase) {
         this.createTransactionUseCase = createTransactionUseCase;
         this.getTransactionsByUserUseCase = getTransactionsByUserUseCase;
-        this.userService = userService;
     }
 
-    public TransactionDTO createTransaction(String description, BigDecimal amount, LocalDate date,
-                                            TransactionType type, UserDTO user) {
-
-        return convertToDTO(createTransactionUseCase.execute(description, amount, date, type, UserService.convert(user)));
+    public TransactionDTO createTransaction(TransactionDTO dto) {
+        final Transaction transaction = Transaction.create(
+                dto.getDescription(),
+                dto.getAmount(),
+                dto.getDate(),
+                dto.getType(),
+                new User(
+                        dto.getUser().getId(),
+                        dto.getUser().getEmail(),
+                        dto.getUser().getUsername()
+                ));
+        return convertToDTO(createTransactionUseCase.execute(transaction));
     }
 
-    public List<TransactionDTO> getTransactionsByUser(UserDTO user) {
-        return getTransactionsByUserUseCase.execute(UserService.convert(user)).stream()
+    public List<TransactionDTO> getTransactionsByUser(UserDTO userDTO) {
+        final User user = new User(
+                userDTO.getId(),
+                userDTO.getEmail(),
+                userDTO.getUsername()
+        );
+        return getTransactionsByUserUseCase.execute(user).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
@@ -46,8 +55,12 @@ public class TransactionService {
                 transaction.getDescription(),
                 transaction.getAmount(),
                 transaction.getDate(),
-                transaction.getType().toString(),
-                transaction.getUser().getId()
+                transaction.getType(),
+                new UserDTO(
+                        transaction.getUser().getId(),
+                        transaction.getUser().getEmail(),
+                        transaction.getUser().getUsername()
+                )
         );
     }
 }

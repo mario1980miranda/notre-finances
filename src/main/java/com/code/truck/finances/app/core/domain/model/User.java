@@ -21,10 +21,6 @@ public class User {
         this.username = username;
     }
 
-    public static User create(String email, String username) {
-        return new User(UUID.randomUUID(), email, username);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
